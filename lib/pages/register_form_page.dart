@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../user.dart';
+import 'user_info_page.dart';
+
 class RegisterFormPage extends StatefulWidget{
   @override
   _RegisterFormPageState createState() => _RegisterFormPageState();
 }
 
 class _RegisterFormPageState extends State<RegisterFormPage>{
+  User newUser = User();
+
   bool _hidePass = true;
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -89,8 +94,10 @@ class _RegisterFormPageState extends State<RegisterFormPage>{
                 ),
               ),
               validator: _validatename,
+              onSaved: (value) => newUser.name = value,
             ),
             SizedBox(height: 10),
+
             TextFormField(
               focusNode: _phoneFocus,
               onFieldSubmitted: (_){
@@ -129,7 +136,9 @@ class _RegisterFormPageState extends State<RegisterFormPage>{
               validator: (value) => _validatorPhoneNum(value)
                   ? null
                   : "must be enteres as (###)###-####",
+              onSaved: (value) => newUser.phone = value,
             ),
+
             SizedBox(height: 10),
             TextFormField(
               controller: _emailController,
@@ -140,6 +149,8 @@ class _RegisterFormPageState extends State<RegisterFormPage>{
               ),
               keyboardType: TextInputType.emailAddress,
               validator: _validateEmail,
+              onSaved: (value) => newUser.email = value,
+
             ),
             SizedBox(height: 10),
             DropdownButtonFormField(
@@ -158,6 +169,7 @@ class _RegisterFormPageState extends State<RegisterFormPage>{
                 print(data);
                 setState(() {
                   _selectedCountry = data;
+                  newUser.country = data;
                 });
                 },
               value: _selectedCountry,
@@ -180,6 +192,7 @@ class _RegisterFormPageState extends State<RegisterFormPage>{
               inputFormatters: [
                 LengthLimitingTextInputFormatter(100)
               ],
+              onSaved: (value) => newUser.story = value,
 
             ),
             SizedBox(height: 10),
@@ -319,6 +332,14 @@ class _RegisterFormPageState extends State<RegisterFormPage>{
               FlatButton(
                   onPressed: (){
                     Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => UserInfoPage(
+                          userInfo: newUser,
+                        ),
+                      ),
+                    );
                   },
                   child:
                   Text('Verified', style: TextStyle(
